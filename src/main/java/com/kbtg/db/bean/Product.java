@@ -1,5 +1,6 @@
 package com.kbtg.db.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +21,13 @@ public class Product {
     private String id;
     private String name;
     private BigDecimal price;
+    private BigDecimal priceBeforeDiscount;
+    private Integer qty;
+    private String brand;
+    private String options;
+    private String pics;
+    private BigDecimal rating;
+    private Integer reviews;
+    private String productGroup;
 
 }

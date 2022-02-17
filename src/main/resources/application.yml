@@ -20,7 +20,7 @@ logging:
     com.kbtg: INFO
     jdbc:
       sqlonly: OFF
-      sqltiming: OFF
+      sqltiming: INFO
       audit: OFF
       resultset: OFF
       connection: ERROR
