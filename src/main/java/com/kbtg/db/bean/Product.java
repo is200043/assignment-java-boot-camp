@@ -1,6 +1,5 @@
 package com.kbtg.db.bean;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Entity
 @Data
@@ -29,5 +29,7 @@ public class Product {
     private BigDecimal rating;
     private Integer reviews;
     private String productGroup;
+    private String merchantId;
+    private Date endPromotionAt;
 
 }
