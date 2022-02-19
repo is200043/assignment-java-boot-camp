@@ -25,6 +25,8 @@ create table user
     province  varchar(100) not null,
     zipcode   varchar(5)   not null,
     mobile_no varchar(10)  not null,
+    username  varchar(50)  not null,
+    password  varchar(100) not null,
     primary key (id)
 );
 

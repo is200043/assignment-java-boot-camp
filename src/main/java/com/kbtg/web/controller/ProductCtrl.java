@@ -22,7 +22,7 @@ public class ProductCtrl {
     }
 
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getProductByName(@RequestParam(value = "page", defaultValue = "0") int page,
+    public ResponseEntity<?> getProductAll(@RequestParam(value = "page", defaultValue = "0") int page,
                                               @RequestParam(value = "size", defaultValue = "10") int size) {
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.noCache())
