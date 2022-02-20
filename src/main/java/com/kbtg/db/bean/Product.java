@@ -31,5 +31,6 @@ public class Product {
     private String productGroup;
     private String merchantId;
     private Date endPromotionAt;
+    private BigDecimal shippingPrice;
 
 }

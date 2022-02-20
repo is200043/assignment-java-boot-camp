@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.kbtg.web.common.CommonConstants.Test.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -37,10 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FlowCtrlTest {
-
-    private static final String USER_ID_CHONLAKORN = "8d9470e7-979b-4dee-b622-8d40cd55afaf";
-    private static final String PRODUCT_ID_IPHONE6 = "43b2c802-dd6e-47df-99e4-511dad7bb9aa";
-    private static final String PRODUCT_ID_SAMSUNG_HERO = "f06c86b0-3598-4242-bf3e-0b28c3ed0a7e";
 
     @Autowired
     private WebApplicationContext wac;
@@ -86,6 +83,7 @@ public class FlowCtrlTest {
                 .productId(PRODUCT_ID_SAMSUNG_HERO)
                 .price(BigDecimal.valueOf(599.00))
                 .qty(1)
+                .shippingPrice(BigDecimal.valueOf(40.00))
                 .build());
         basketItemList.add(BasketItem.builder() // ลด Item
                 .productId(PRODUCT_ID_IPHONE6)

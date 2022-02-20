@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BasketService {
 
-    List<UserItem> getUserItemListByUserId(String userId);
+    List<BasketItem> getBasketItemListByUserId(String userId);
 
     void upsertUserItemByUserId(String userId, List<BasketItem> basketItemList);
 

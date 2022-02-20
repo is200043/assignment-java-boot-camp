@@ -23,5 +23,6 @@ public class User {
     private String province;
     private String zipcode;
     private String mobileNo;
+    private String email;
 
 }

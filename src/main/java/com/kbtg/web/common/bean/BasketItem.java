@@ -17,5 +17,6 @@ public class BasketItem {
     private BigDecimal price;
     private Integer qty;
     private String options;
+    private BigDecimal shippingPrice;
 
 }

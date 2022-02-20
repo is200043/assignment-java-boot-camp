@@ -25,7 +25,7 @@ public class BasketCtrl {
     public ResponseEntity<?> getBasketByUserId(@PathVariable String userId) {
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.noCache())
-                .body(basketService.getUserItemListByUserId(userId));
+                .body(basketService.getBasketItemListByUserId(userId));
     }
 
     @PutMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -28,8 +28,15 @@ public class BasketServiceImpl implements BasketService {
     }
 
     @Override
-    public List<UserItem> getUserItemListByUserId(String userId) {
-        return userItemRepo.findByUserItemId_UserIdEquals(userId);
+    public List<BasketItem> getBasketItemListByUserId(String userId) {
+        return userItemRepo.findByUserItemId_UserIdEquals(userId).stream().map(it -> BasketItem.builder()
+                        .productId(it.getUserItemId().getProductId())
+                        .price(it.getPrice())
+                        .qty(it.getQty())
+                        .options(it.getOptions())
+                        .shippingPrice(it.getShippingPrice())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -48,12 +55,16 @@ public class BasketServiceImpl implements BasketService {
         basketItemList.forEach(it -> {
             Product product = productList.stream().filter(p -> p.getId().equals(it.getProductId())).findFirst().orElseThrow(() -> new RuntimeException("Product not found"));
             UserItem nUserItem = UserItem.builder().userItemId(UserItemId.builder().userId(userId).productId(it.getProductId()).build())
-                    .price(product.getPrice()).qty(it.getQty()).options(it.getOptions()).build();
+                    .price(product.getPrice()).qty(it.getQty()).options(it.getOptions()).shippingPrice(it.getShippingPrice())
+                    .build();
 
             Optional<UserItem> oUserItemOpt = finalOldUserItemList.stream().filter(oItem -> it.getProductId().equals(oItem.getUserItemId().getProductId())).findFirst();
             if (oUserItemOpt.isPresent()) {
                 UserItem oUserItem = oUserItemOpt.get();
                 nUserItem.setQty(oUserItem.getQty() + nUserItem.getQty());
+            }
+            if (nUserItem.getQty() < 0) {
+                throw new RuntimeException("Product " + it.getProductId() + " < 0");
             }
             userItemRepo.save(nUserItem);
         });

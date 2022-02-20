@@ -22,5 +22,6 @@ public class UserItem {
     private Integer qty;
     private BigDecimal price;
     private String options;
+    private BigDecimal shippingPrice;
 
 }

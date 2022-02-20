@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class UserPurchanceHistoryDetailId implements Serializable {
 
     private static final long serialVersionUID = 3703167476848616670L;
-    private String transactionId;
+    private String userPurchanceHistoryId;
     private String productId;
 
 }

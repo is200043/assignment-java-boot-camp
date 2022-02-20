@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -24,6 +27,18 @@ public class UserPurchanceHistory {
     private BigDecimal totalDiscount;
     private BigDecimal totalAmount;
     private String paymentType;
-    private String paymentMarking;
+    private String paymentResponse;
+    private Date paymentAt;
+    private String status;
+    private String shippingName;
+    private String shippingAddress;
+    private String shippingDistrict;
+    private String shippingProvince;
+    private String shippingZipcode;
+    private String shippingMobileNo;
+    private String shippingEmail;
+
+    @Transient
+    private List<UserPurchanceHistoryDetail> userPurchanceHistoryDetailList;
 
 }
