@@ -7,6 +7,7 @@ import com.kbtg.db.bean.UserPurchanceHistoryDetail;
 import com.kbtg.db.bean.id.UserItemId;
 import com.kbtg.db.dao.ProductRepo;
 import com.kbtg.db.dao.UserItemRepo;
+import com.kbtg.db.dao.UserPurchanceHistoryDetailRepo;
 import com.kbtg.db.dao.UserPurchanceHistoryRepo;
 import com.kbtg.web.common.bean.PurchancePayment;
 import com.kbtg.web.common.bean.ShippingInfo;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.kbtg.web.common.CommonConstants.UserPurchanceHistory.*;
+import static org.apache.commons.lang3.BooleanUtils.isFalse;
 
 @Slf4j
 @Service
@@ -27,11 +29,16 @@ public class PurchanceServiceImpl implements PurchanceService {
 
     private final UserItemRepo userItemRepo;
     private final UserPurchanceHistoryRepo userPurchanceHistoryRepo;
+    private final UserPurchanceHistoryDetailRepo userPurchanceHistoryDetailRepo;
     private final ProductRepo productRepo;
 
-    public PurchanceServiceImpl(UserItemRepo userItemRepo, UserPurchanceHistoryRepo userPurchanceHistoryRepo, ProductRepo productRepo) {
+    public PurchanceServiceImpl(UserItemRepo userItemRepo,
+                                UserPurchanceHistoryRepo userPurchanceHistoryRepo,
+                                UserPurchanceHistoryDetailRepo userPurchanceHistoryDetailRepo,
+                                ProductRepo productRepo) {
         this.userItemRepo = userItemRepo;
         this.userPurchanceHistoryRepo = userPurchanceHistoryRepo;
+        this.userPurchanceHistoryDetailRepo = userPurchanceHistoryDetailRepo;
         this.productRepo = productRepo;
     }
 
@@ -42,7 +49,10 @@ public class PurchanceServiceImpl implements PurchanceService {
         userPurchanceHistory.setStatus(STATUS_CHECKOUT);
         userPurchanceHistory.setCreatedAt(new Date());
         userPurchanceHistory.setModifiedAt(new Date());
+        Date expiredAt = Date.from(userPurchanceHistory.getCreatedAt().toInstant().plus(Duration.ofMinutes(15)));
+        userPurchanceHistory.setExpiredAt(expiredAt);
         userPurchanceHistoryRepo.save(userPurchanceHistory);
+        userPurchanceHistoryDetailRepo.saveAll(userPurchanceHistoryDetailList);
 
         for (UserPurchanceHistoryDetail it : userPurchanceHistoryDetailList) {
             Product product = productRepo.findById(it.getUserPurchanceHistoryDetailId().getProductId()).orElseThrow(() -> new RuntimeException("Product not found"));
@@ -64,7 +74,6 @@ public class PurchanceServiceImpl implements PurchanceService {
             }
             productRepo.save(product);
         }
-
     }
 
     @Override
@@ -83,6 +92,7 @@ public class PurchanceServiceImpl implements PurchanceService {
     }
 
     @Override
+    @Transactional
     public void purchancePayment(String userId, PurchancePayment purchancePayment, boolean isPaymentPass) throws RuntimeException {
         UserPurchanceHistory userPurchanceHistory = userPurchanceHistoryRepo.findById(purchancePayment.getUserPurchanceHistoryId()).orElseThrow(() -> new RuntimeException("User Purchance History not found"));
         userPurchanceHistory.setModifiedAt(new Date());
@@ -92,13 +102,29 @@ public class PurchanceServiceImpl implements PurchanceService {
         if (!userId.equals(userPurchanceHistory.getUserId())) {
             throw new RuntimeException("User not match");
         }
-        Date expiredAt = Date.from(userPurchanceHistory.getCreatedAt().toInstant().plus(Duration.ofMinutes(15)));
-        if (expiredAt.before(new Date())) {
-            userPurchanceHistory.setStatus(STATUS_EXPIRED);
-            userPurchanceHistoryRepo.save(userPurchanceHistory);
+        if (userPurchanceHistory.getExpiredAt().before(new Date())) {
+            this.adjustStock(userPurchanceHistory, STATUS_EXPIRED);
             throw new RuntimeException("Payment expired");
         }
         userPurchanceHistory.setStatus(isPaymentPass ? STATUS_PAID : STATUS_REJECT);
+        if (isFalse(isPaymentPass)) {
+            this.adjustStock(userPurchanceHistory, STATUS_REJECT);
+            throw new RuntimeException("Payment reject");
+        }
         userPurchanceHistoryRepo.save(userPurchanceHistory);
+    }
+
+    @Override
+    @Transactional
+    public void adjustStock(UserPurchanceHistory userPurchanceHistory, String status) throws RuntimeException {
+        userPurchanceHistory.setStatus(status);
+        userPurchanceHistoryRepo.save(userPurchanceHistory);
+
+        //คืน Stock
+        for (UserPurchanceHistoryDetail it : userPurchanceHistory.getUserPurchanceHistoryDetailList()) {
+            Product product = productRepo.findById(it.getUserPurchanceHistoryDetailId().getProductId()).orElseThrow(() -> new RuntimeException("Product not found"));
+            product.setQty(product.getQty() + it.getQty());
+            productRepo.save(product);
+        }
     }
 }

@@ -28,5 +28,10 @@ insert into user_item
 values ('8d9470e7-979b-4dee-b622-8d40cd55afaf', '43b2c802-dd6e-47df-99e4-511dad7bb9aa', 2, 4880.00,
         '{"color": "GREY", "size": "64GB"}', 40.00);
 
-insert into user_purchance_history (id, user_id, total_price, total_shipping, total_discount, total_amount, status, modified_at)
-values ('01cb66fa-8f80-46b6-8a85-7b4ba617b89a', '8d9470e7-979b-4dee-b622-8d40cd55afaf', 599.0, 0.0, 40.0, 639.0, 'Checkout', NOW());
+insert into user_purchance_history (id, user_id, total_price, total_shipping, total_discount, total_amount, status,
+                                    modified_at)
+values ('01cb66fa-8f80-46b6-8a85-7b4ba617b89a', '8d9470e7-979b-4dee-b622-8d40cd55afaf', 599.0, 0.0, 40.0, 639.0,
+        'Checkout', NOW());
+
+insert into user_purchance_history_detail (user_purchance_history_id, product_id, price, qty, shipping_price, options)
+values ('01cb66fa-8f80-46b6-8a85-7b4ba617b89a', 'f06c86b0-3598-4242-bf3e-0b28c3ed0a7e', 599, 1, 40, NULL);

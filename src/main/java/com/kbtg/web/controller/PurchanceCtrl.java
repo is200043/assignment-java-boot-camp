@@ -48,6 +48,9 @@ public class PurchanceCtrl {
         try {
             String id = UUID.randomUUID().toString();
 
+            if (selectItemList.size() <= 0) {
+                throw new RuntimeException("Please select item in basket");
+            }
             List<UserPurchanceHistoryDetail> userPurchanceHistoryDetailList = selectItemList.stream().map(it -> UserPurchanceHistoryDetail.builder().userPurchanceHistoryDetailId(UserPurchanceHistoryDetailId.builder()
                             .userPurchanceHistoryId(id)
                             .productId(it.getProductId())

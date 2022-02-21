@@ -64,6 +64,7 @@ create table user_purchance_history
     shipping_email     varchar(150)   null,
     created_at         datetime       not null default CURRENT_TIMESTAMP,
     modified_at        datetime       not null ON UPDATE CURRENT_TIMESTAMP,
+    expired_at         datetime       null,
     primary key (id)
 );
 

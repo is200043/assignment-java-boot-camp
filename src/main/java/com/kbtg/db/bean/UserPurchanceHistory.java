@@ -40,6 +40,8 @@ public class UserPurchanceHistory {
     private Date createdAt;
     @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date expiredAt;
 
     @Transient
     private List<UserPurchanceHistoryDetail> userPurchanceHistoryDetailList;

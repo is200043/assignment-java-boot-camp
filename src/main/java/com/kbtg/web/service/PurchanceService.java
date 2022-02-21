@@ -12,4 +12,6 @@ public interface PurchanceService {
 
     void purchancePayment(String userId, PurchancePayment purchancePayment, boolean isPaymentPass) throws RuntimeException;
 
+    void adjustStock(UserPurchanceHistory userPurchanceHistory, String status) throws RuntimeException;
+
 }

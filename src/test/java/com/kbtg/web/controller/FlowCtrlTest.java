@@ -1,8 +1,12 @@
 package com.kbtg.web.controller;
 
+import com.kbtg.db.bean.Product;
 import com.kbtg.db.bean.UserPurchanceHistory;
+import com.kbtg.db.bean.UserPurchanceHistoryDetail;
 import com.kbtg.db.bean.id.UserItemId;
+import com.kbtg.db.dao.ProductRepo;
 import com.kbtg.db.dao.UserItemRepo;
+import com.kbtg.db.dao.UserPurchanceHistoryDetailRepo;
 import com.kbtg.db.dao.UserPurchanceHistoryRepo;
 import com.kbtg.web.common.bean.BasketItem;
 import com.kbtg.web.common.bean.PurchancePayment;
@@ -30,12 +34,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.kbtg.web.common.CommonConstants.Test.*;
 import static com.kbtg.web.common.CommonConstants.Payment.TYPE_CREDIT_CARD;
+import static com.kbtg.web.common.CommonConstants.Test.*;
+import static com.kbtg.web.common.CommonConstants.UserPurchanceHistory.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
@@ -49,9 +53,13 @@ public class FlowCtrlTest {
     @Autowired
     private WebApplicationContext wac;
     @Autowired
+    private ProductRepo productRepo;
+    @Autowired
     private UserItemRepo userItemRepo;
     @Autowired
     private UserPurchanceHistoryRepo userPurchanceHistoryRepo;
+    @Autowired
+    private UserPurchanceHistoryDetailRepo userPurchanceHistoryDetailRepo;
 
     private MockMvc mockMvc;
     private String userPurchanceHistoryId;
@@ -141,6 +149,8 @@ public class FlowCtrlTest {
                 .shippingPrice(BigDecimal.valueOf(40.00))
                 .build());
 
+        Product productOld = productRepo.findById(PRODUCT_ID_SAMSUNG_HERO).orElse(new Product());
+
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/purchance/checkout/" + USER_ID_CHONLAKORN)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(new JSONArray(basketItemList).toString()))
@@ -157,6 +167,13 @@ public class FlowCtrlTest {
         assertNotNull(userPurchanceHistoryId);
         UserPurchanceHistory userPurchanceHistory = userPurchanceHistoryRepo.findById(userPurchanceHistoryId).orElse(new UserPurchanceHistory());
         assertEquals(userPurchanceHistoryId, userPurchanceHistory.getId());
+        assertEquals(STATUS_CHECKOUT, userPurchanceHistory.getStatus());
+
+        List<UserPurchanceHistoryDetail> userPurchanceHistoryDetailList = userPurchanceHistoryDetailRepo.findByUserPurchanceHistoryDetailId_UserPurchanceHistoryId(userPurchanceHistoryId);
+        assertTrue(userPurchanceHistoryDetailList.size() > 0);
+        assertTrue(userPurchanceHistoryDetailList.stream().anyMatch(it -> PRODUCT_ID_SAMSUNG_HERO.equals(it.getUserPurchanceHistoryDetailId().getProductId())));
+        Product product = productRepo.findById(PRODUCT_ID_SAMSUNG_HERO).orElse(new Product());
+        assertTrue((productOld.getQty() - 1) == product.getQty());
     }
 
     @Test
@@ -186,6 +203,7 @@ public class FlowCtrlTest {
 
         UserPurchanceHistory userPurchanceHistory = userPurchanceHistoryRepo.findById(id).orElse(new UserPurchanceHistory());
         log.info(userPurchanceHistory.toString());
+        assertEquals(STATUS_SHIPPING_INFO, userPurchanceHistory.getStatus());
         assertEquals(shippingInfo.getName(), userPurchanceHistory.getShippingName());
         assertEquals(shippingInfo.getAddress(), userPurchanceHistory.getShippingAddress());
         assertEquals(shippingInfo.getDistrict(), userPurchanceHistory.getShippingDistrict());
@@ -218,5 +236,9 @@ public class FlowCtrlTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.data.status", is("ok")))
                 .andReturn();
+
+        UserPurchanceHistory userPurchanceHistory = userPurchanceHistoryRepo.findById(id).orElse(new UserPurchanceHistory());
+        log.info(userPurchanceHistory.toString());
+        assertEquals(STATUS_PAID, userPurchanceHistory.getStatus());
     }
 }
