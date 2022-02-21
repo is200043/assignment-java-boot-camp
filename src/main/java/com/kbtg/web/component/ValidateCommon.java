@@ -23,7 +23,7 @@ public class ValidateCommon {
 
     public Optional<String> checkFormatMobileNo(String mobileNo) {
         try {
-            if (!isNotEmpty(mobileNo)) {
+            if (isNotEmpty(mobileNo)) {
                 this.validateMobileNo(mobileNo.trim());
                 return Optional.ofNullable(mobileNo);
             }

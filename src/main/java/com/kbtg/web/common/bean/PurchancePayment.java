@@ -15,7 +15,7 @@ public class PurchancePayment {
     private String paymentType;
     private String cardNo;
     private String name;
-    private String expireAt;
+    private String expireDate;
     private String ccv;
 
 }

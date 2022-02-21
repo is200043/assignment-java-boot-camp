@@ -5,9 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +26,7 @@ public class UserPurchanceHistory {
     private BigDecimal totalAmount;
     private String paymentType;
     private String paymentResponse;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date paymentAt;
     private String status;
     private String shippingName;
@@ -37,6 +36,10 @@ public class UserPurchanceHistory {
     private String shippingZipcode;
     private String shippingMobileNo;
     private String shippingEmail;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date modifiedAt;
 
     @Transient
     private List<UserPurchanceHistoryDetail> userPurchanceHistoryDetailList;

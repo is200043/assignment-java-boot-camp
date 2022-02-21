@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -30,6 +32,7 @@ public class Product {
     private Integer reviews;
     private String productGroup;
     private String merchantId;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date endPromotionAt;
     private BigDecimal shippingPrice;
 

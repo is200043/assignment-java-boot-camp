@@ -54,14 +54,16 @@ create table user_purchance_history
     payment_type       varchar(50)    null,
     payment_response   varchar(255)   null,
     payment_at         datetime       null,
-    status             varchar(50)    not null default 'Checkout', -- CheckOut, Cancel, Paid, Expired
-    shipping_name      varchar(150)   not null,
-    shipping_address   varchar(255)   not null,
-    shipping_district  varchar(100)   not null,
-    shipping_province  varchar(100)   not null,
-    shipping_zipcode   varchar(5)     not null,
-    shipping_mobile_no varchar(10)    not null,
-    shipping_email     varchar(150)   not null,
+    status             varchar(50)    not null default 'Checkout', -- CheckOut, ShippingInfo, Cancel, Paid, Expired, Reject
+    shipping_name      varchar(150)   null,
+    shipping_address   varchar(255)   null,
+    shipping_district  varchar(100)   null,
+    shipping_province  varchar(100)   null,
+    shipping_zipcode   varchar(5)     null,
+    shipping_mobile_no varchar(10)    null,
+    shipping_email     varchar(150)   null,
+    created_at         datetime       not null default CURRENT_TIMESTAMP,
+    modified_at        datetime       not null ON UPDATE CURRENT_TIMESTAMP,
     primary key (id)
 );
 

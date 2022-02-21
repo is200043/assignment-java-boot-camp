@@ -10,6 +10,6 @@ public interface PurchanceService {
 
     void insertShippingInfo(String userId, ShippingInfo shippingInfo) throws RuntimeException;
 
-    int paymentPurchance(String userId, PurchancePayment purchancePayment) throws RuntimeException;
+    void purchancePayment(String userId, PurchancePayment purchancePayment, boolean isPaymentPass) throws RuntimeException;
 
 }
